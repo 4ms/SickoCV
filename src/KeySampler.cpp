@@ -59,6 +59,9 @@
 
 #include "plugin.hpp"
 #include "osdialog.h"
+#if defined(METAMODULE)
+#include "async_filebrowser.hh"
+#endif
 //#define DR_WAV_IMPLEMENTATION
 #include "dr_wav.h"
 #include <vector>
@@ -1172,7 +1175,11 @@ struct KeySampler : Module {
 
 	void selectRootFolder() {
 		const char* prevFolder = userFolder.c_str();
+#if defined(METAMODULE)
+		async_osdialog_file(OSDIALOG_OPEN_DIR, prevFolder, NULL, NULL, [this](char *path) {
+#else
 		char *path = osdialog_file(OSDIALOG_OPEN_DIR, prevFolder, NULL, NULL);
+#endif
 		if (path) {
 			folderTreeData.clear();
 			folderTreeDisplay.clear();
@@ -1184,6 +1191,9 @@ struct KeySampler : Module {
 			}
 		}
 		free(path);
+#if defined(METAMODULE)
+		});
+#endif
 	};
 
 	void refreshRootFolder() {
@@ -1472,7 +1482,11 @@ struct KeySampler : Module {
 		static const char FILE_FILTERS[] = "Wave (.wav):wav,WAV";
 		osdialog_filters* filters = osdialog_filters_parse(FILE_FILTERS);
 		DEFER({osdialog_filters_free(filters);});
+#if defined(METAMODULE)
+		async_osdialog_file(OSDIALOG_SAVE, NULL, NULL, filters, [=,this](char *path) {
+#else
 		char *path = osdialog_file(OSDIALOG_SAVE, NULL, NULL, filters);
+#endif
 		if (path) {
 			saveMode = mode;
 			saveSample(path, slot);
@@ -1484,6 +1498,9 @@ struct KeySampler : Module {
 		channels[slot] = fileChannels[slot];
 		fileLoaded[slot] = true;
 		free(path);
+#if defined(METAMODULE)
+	});
+#endif
 	};
 
 	void saveSample(std::string path, int slot) {
@@ -1652,7 +1669,11 @@ struct KeySampler : Module {
 		static const char FILE_FILTERS[] = "Wave (.wav):wav,WAV;All files (*.*):*.*";
 		osdialog_filters* filters = osdialog_filters_parse(FILE_FILTERS);
 		DEFER({osdialog_filters_free(filters);});
+#if defined(METAMODULE)
+		async_osdialog_file(OSDIALOG_OPEN, NULL, NULL, filters, [=, this](char *path) {
+#else
 		char *path = osdialog_file(OSDIALOG_OPEN, NULL, NULL, filters);
+#endif
 		fileLoaded[slot] = false;
 		restoreLoadFromPatch[slot] = false;
 		if (path) {
@@ -1667,6 +1688,9 @@ struct KeySampler : Module {
 			fileLoaded[slot] = false;
 		}
 		free(path);
+#if defined(METAMODULE)
+	});
+#endif
 	}
 
 	void loadSample(std::string fromPath, int slot) {

@@ -27,6 +27,9 @@
 
 #include "plugin.hpp"
 #include "osdialog.h"
+#if defined(METAMODULE)
+#include "async_filebrowser.hh"
+#endif
 //#define DR_WAV_IMPLEMENTATION
 #include "dr_wav.h"
 #include <vector>
@@ -382,8 +385,12 @@ struct SickoSampler : Module {
 	bool prevPrevSample = false;
 
 	bool unlimitedRecording = false;
+#if defined(METAMODULE)
+	const drwav_uint64 recordingLimit = 48000 * 2 * 60; // 60 sec limit on MM = 5.5MB
+#else
 	const drwav_uint64 recordingLimit = 52428800 * 2;
-	//const drwav_uint64 recordingLimit = 480000 * 2; // 10 sec for test purposes
+	// const drwav_uint64 recordingLimit = 480000 * 2; // 10 sec for test purposes
+#endif
 	drwav_uint64 currentRecordingLimit = recordingLimit;
 
 	static constexpr float minStageTime = 1.f;  // in milliseconds
@@ -719,7 +726,11 @@ struct SickoSampler : Module {
 
 	void selectRootFolder() {
 		const char* prevFolder = userFolder.c_str();
+#if defined(METAMODULE)
+		async_osdialog_file(OSDIALOG_OPEN_DIR, prevFolder, NULL, NULL, [this](char *path) {
+#else
 		char *path = osdialog_file(OSDIALOG_OPEN_DIR, prevFolder, NULL, NULL);
+#endif
 		if (path) {
 			folderTreeData.clear();
 			folderTreeDisplay.clear();
@@ -731,6 +742,9 @@ struct SickoSampler : Module {
 			}
 		}
 		free(path);
+#if defined(METAMODULE)
+		});
+#endif
 	};
 
 	void refreshRootFolder() {
@@ -782,8 +796,8 @@ struct SickoSampler : Module {
 						}
 					}
 				}
-	   		}
-	   		closedir(dir);
+			}
+			closedir(dir);
 
 			sort(browserDir.begin(), browserDir.end());
 			sort(browserDirDisplay.begin(), browserDirDisplay.end());
@@ -1000,7 +1014,11 @@ struct SickoSampler : Module {
 		static const char FILE_FILTERS[] = "Wave (.wav):wav,WAV";
 		osdialog_filters* filters = osdialog_filters_parse(FILE_FILTERS);
 		DEFER({osdialog_filters_free(filters);});
+#if defined(METAMODULE)
+		async_osdialog_file(OSDIALOG_SAVE, NULL, NULL, filters, [=,this](char *path) {
+#else
 		char *path = osdialog_file(OSDIALOG_SAVE, NULL, NULL, filters);
+#endif
 		if (path) {
 			saveMode = mode;
 			fileDescription = basename(path);
@@ -1014,6 +1032,10 @@ struct SickoSampler : Module {
 		channels = fileChannels;
 		fileLoaded = true;
 		free(path);
+
+#if defined(METAMODULE)
+	});
+#endif
 	};
 
 	void saveSample(std::string path) {
@@ -1174,7 +1196,11 @@ struct SickoSampler : Module {
 		static const char FILE_FILTERS[] = "Wave (.wav):wav,WAV;All files (*.*):*.*";
 		osdialog_filters* filters = osdialog_filters_parse(FILE_FILTERS);
 		DEFER({osdialog_filters_free(filters);});
+#if defined(METAMODULE)
+		async_osdialog_file(OSDIALOG_OPEN, NULL, NULL, filters, [this](char *path) {
+#else
 		char *path = osdialog_file(OSDIALOG_OPEN, NULL, NULL, filters);
+#endif
 		fileLoaded = false;
 		restoreLoadFromPatch = false;
 		if (path) {
@@ -1188,6 +1214,9 @@ struct SickoSampler : Module {
 			fileLoaded = false;
 		}
 		free(path);
+#if defined(METAMODULE)
+		});
+#endif
 	}
 
 	void loadSample(std::string fromPath) {
@@ -5126,7 +5155,7 @@ struct SickoSamplerDisplay : TransparentWidget {
 			for (unsigned int i = 1; i < module->folderTreeData[tempIndex].size(); i++) {
 				if (module->folderTreeData[tempIndex][i].substr(module->folderTreeData[tempIndex][i].length()-1,module->folderTreeData[tempIndex][i].length()-1) == "/")  {
 					module->tempDir = module->folderTreeData[tempIndex][i];
-					menu->addChild(createSubmenuItem(module->folderTreeDisplay[tempIndex][i], "", [=](Menu* menu) {
+					menu->addChild(createSubmenuItem(module->folderTreeDisplay[tempIndex][i], "", [=,this](Menu* menu) {
 						loadSubfolder(menu, module->folderTreeData[tempIndex][i]);
 					}));
 				} else {
@@ -5153,14 +5182,14 @@ struct SickoSamplerDisplay : TransparentWidget {
 			}));
 
 			if (module->folderTreeData.size() > 0) {
-				menu->addChild(createSubmenuItem("Samples Browser", "", [=](Menu* menu) {
+				menu->addChild(createSubmenuItem("Samples Browser", "", [=,this](Menu* menu) {
 					//module->folderTreeData.resize(1);
 					//module->folderTreeDisplay.resize(1);
 					module->refreshRootFolder();
 					for (unsigned int i = 1; i < module->folderTreeData[0].size(); i++) {
 						if (module->folderTreeData[0][i].substr(module->folderTreeData[0][i].length()-1, module->folderTreeData[0][i].length()-1) == "/")  {
 							module->tempDir = module->folderTreeData[0][i];
-							menu->addChild(createSubmenuItem(module->folderTreeDisplay[0][i], "", [=](Menu* menu) {
+							menu->addChild(createSubmenuItem(module->folderTreeDisplay[0][i], "", [=,this](Menu* menu) {
 								loadSubfolder(menu, module->folderTreeData[0][i]);
 							}));
 						} else {
@@ -5383,7 +5412,7 @@ struct SickoSamplerWidget : ModuleWidget {
 			for (unsigned int i = 1; i < module->folderTreeData[tempIndex].size(); i++) {
 				if (module->folderTreeData[tempIndex][i].substr(module->folderTreeData[tempIndex][i].length()-1,module->folderTreeData[tempIndex][i].length()-1) == "/")  {
 						module->tempDir = module->folderTreeData[tempIndex][i];
-						menu->addChild(createSubmenuItem(module->folderTreeDisplay[tempIndex][i], "", [=](Menu* menu) {
+						menu->addChild(createSubmenuItem(module->folderTreeDisplay[tempIndex][i], "", [=,this](Menu* menu) {
 								loadSubfolder(menu, module->folderTreeData[tempIndex][i]);
 						}));
 				} else {
@@ -5408,14 +5437,14 @@ struct SickoSamplerWidget : ModuleWidget {
 		}));
 
 		if (module->folderTreeData.size() > 0) {
-			menu->addChild(createSubmenuItem("Samples Browser", "", [=](Menu* menu) {
+			menu->addChild(createSubmenuItem("Samples Browser", "", [=,this](Menu* menu) {
 				//module->folderTreeData.resize(1);
 				//module->folderTreeDisplay.resize(1);
 				module->refreshRootFolder();
 				for (unsigned int i = 1; i < module->folderTreeData[0].size(); i++) {
 					if (module->folderTreeData[0][i].substr(module->folderTreeData[0][i].length()-1, module->folderTreeData[0][i].length()-1) == "/")  {
 						module->tempDir = module->folderTreeData[0][i];
-						menu->addChild(createSubmenuItem(module->folderTreeDisplay[0][i], "", [=](Menu* menu) {
+						menu->addChild(createSubmenuItem(module->folderTreeDisplay[0][i], "", [=,this](Menu* menu) {
 							loadSubfolder(menu, module->folderTreeData[0][i]);
 						}));
 					} else {
@@ -5496,7 +5525,9 @@ struct SickoSamplerWidget : ModuleWidget {
 		menu->addChild(createBoolPtrMenuItem("Reset cursors on Load", "", &module->resetCursorsOnLoad));
 		menu->addChild(createBoolPtrMenuItem("Disable NAV Buttons", "", &module->disableNav));
 		menu->addChild(createBoolPtrMenuItem("Store Sample in Patch", "", &module->sampleInPatch));
+#if !defined(METAMODULE)
 		menu->addChild(createBoolPtrMenuItem("Unlimited REC (risky)", "", &module->unlimitedRecording));
+#endif
 
 		menu->addChild(new MenuSeparator());
 		menu->addChild(createSubmenuItem("Presets", "", [=](Menu * menu) {
