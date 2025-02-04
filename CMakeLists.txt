@@ -20,10 +20,10 @@ set(SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR})
 
 target_sources(SickoCV
     PRIVATE
-    # ${SOURCE_DIR}/src/Addr8.cpp
-    # ${SOURCE_DIR}/src/Bgates.cpp
+    ${SOURCE_DIR}/src/DrumPlayer.cpp
+    ${SOURCE_DIR}/src/KeySampler.cpp
+    ${SOURCE_DIR}/src/SickoPlayer.cpp
     ${SOURCE_DIR}/src/SickoSampler.cpp
-    ${SOURCE_DIR}/src/SickoSampler2.cpp
 
     ${SOURCE_DIR}/src/plugin.cpp
 )
