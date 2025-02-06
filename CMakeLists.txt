@@ -24,6 +24,8 @@ target_sources(SickoCV
     ${SOURCE_DIR}/src/KeySampler.cpp
     ${SOURCE_DIR}/src/SickoPlayer.cpp
     ${SOURCE_DIR}/src/SickoSampler.cpp
+    ${SOURCE_DIR}/src/SickoLooper1.cpp
+    ${SOURCE_DIR}/src/SickoLooper1Exp.cpp
 
     ${SOURCE_DIR}/src/plugin.cpp
 )

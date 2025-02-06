@@ -1034,7 +1034,7 @@ struct SickoSampler : Module {
 		free(path);
 
 #if defined(METAMODULE)
-	});
+		});
 #endif
 	};
 

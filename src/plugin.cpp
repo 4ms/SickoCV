@@ -48,7 +48,7 @@ void init(Plugin* p) {
 	// p->addModel(modelSickoAmp);
 	// p->addModel(modelSickoCrosser);
 	// p->addModel(modelSickoCrosser4);
-	// p->addModel(modelSickoLooper1);
+	p->addModel(modelSickoLooper1);
 	// p->addModel(modelSickoLooper1Exp);
 	// p->addModel(modelSickoLooper3);
 	// p->addModel(modelSickoLooper5);
