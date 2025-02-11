@@ -20,11 +20,65 @@ set(SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR})
 
 target_sources(SickoCV
     PRIVATE
-    # ${SOURCE_DIR}/src/Addr8.cpp
-    # ${SOURCE_DIR}/src/Bgates.cpp
+    ${SOURCE_DIR}/src/Adder8.cpp
+    ${SOURCE_DIR}/src/Bgates.cpp
+    ${SOURCE_DIR}/src/Blender.cpp
+    ${SOURCE_DIR}/src/Blender8.cpp
+    ${SOURCE_DIR}/src/Btoggler.cpp
+    ${SOURCE_DIR}/src/BtogglerPlus.cpp
+    ${SOURCE_DIR}/src/BtogglerSt.cpp
+    ${SOURCE_DIR}/src/BtogglerStCompact.cpp
+    ${SOURCE_DIR}/src/CVrouter.cpp
+    ${SOURCE_DIR}/src/CVswitcher.cpp
+    ${SOURCE_DIR}/src/Calcs.cpp
+    ${SOURCE_DIR}/src/Clocker.cpp
+    ${SOURCE_DIR}/src/Clocker2.cpp
+    ${SOURCE_DIR}/src/DrumPlayer.cpp
+    ${SOURCE_DIR}/src/DrumPlayerPlus.cpp
+    ${SOURCE_DIR}/src/DrumPlayerXtra.cpp
+    ${SOURCE_DIR}/src/Drummer.cpp
+    ${SOURCE_DIR}/src/Drummer4.cpp
+    ${SOURCE_DIR}/src/Drummer4Plus.cpp
+    ${SOURCE_DIR}/src/Enver.cpp
+    ${SOURCE_DIR}/src/Holder.cpp
+    ${SOURCE_DIR}/src/Holder8.cpp
+    ${SOURCE_DIR}/src/HolderCompact.cpp
+    ${SOURCE_DIR}/src/KeySampler.cpp
+    ${SOURCE_DIR}/src/Modulator.cpp
+    ${SOURCE_DIR}/src/Modulator7.cpp
+    ${SOURCE_DIR}/src/Modulator7Compact.cpp
+    ${SOURCE_DIR}/src/MultiRouter.cpp
+    ${SOURCE_DIR}/src/MultiSwitcher.cpp
+    ${SOURCE_DIR}/src/Parking.cpp
+    ${SOURCE_DIR}/src/PolyMuter16.cpp
+    ${SOURCE_DIR}/src/PolyMuter16Plus.cpp
+    ${SOURCE_DIR}/src/PolyMuter8.cpp
+    ${SOURCE_DIR}/src/PolyMuter8Plus.cpp
+    ${SOURCE_DIR}/src/Shifter.cpp
+    ${SOURCE_DIR}/src/SickoAmp.cpp
+    ${SOURCE_DIR}/src/SickoCrosser.cpp
+    ${SOURCE_DIR}/src/SickoCrosser4.cpp
+    ${SOURCE_DIR}/src/SickoLooper1.cpp
+    ${SOURCE_DIR}/src/SickoLooper1Exp.cpp
+    ${SOURCE_DIR}/src/SickoLooper3.cpp
+    ${SOURCE_DIR}/src/SickoLooper5.cpp
+    ${SOURCE_DIR}/src/SickoPlayer.cpp
+    ${SOURCE_DIR}/src/SickoQuant.cpp
+    ${SOURCE_DIR}/src/SickoQuant4.cpp
     ${SOURCE_DIR}/src/SickoSampler.cpp
     ${SOURCE_DIR}/src/SickoSampler2.cpp
-
+    ${SOURCE_DIR}/src/SimpleSeq4.cpp
+    ${SOURCE_DIR}/src/Slewer.cpp
+    ${SOURCE_DIR}/src/StepSeq.cpp
+    ${SOURCE_DIR}/src/StepSeqPlus.cpp
+    ${SOURCE_DIR}/src/Switcher.cpp
+    ${SOURCE_DIR}/src/Switcher8.cpp
+    ${SOURCE_DIR}/src/SwitcherSt.cpp
+    ${SOURCE_DIR}/src/Toggler.cpp
+    ${SOURCE_DIR}/src/TogglerCompact.cpp
+    ${SOURCE_DIR}/src/TrigSeq.cpp
+    ${SOURCE_DIR}/src/TrigSeqPlus.cpp
+    ${SOURCE_DIR}/src/Wavetabler.cpp
     ${SOURCE_DIR}/src/plugin.cpp
 )
 
@@ -34,8 +88,7 @@ target_include_directories(SickoCV PRIVATE
 
 target_compile_options(SickoCV
     PRIVATE
-    # -Wno-deprecated
-    # -Wno-deprecated-enum-float-conversion
+    -Wno-deprecated
 )
 
 set_property(TARGET SickoCV PROPERTY CXX_STANDARD 20)
