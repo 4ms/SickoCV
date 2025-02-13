@@ -91,6 +91,12 @@ target_compile_options(SickoCV
     -Wno-deprecated
 )
 
+set_source_files_properties(
+	${SOURCE_DIR}/src/StepSeqPlus.cpp 
+	${SOURCE_DIR}/src/TrigSeqPlus.cpp
+	COMPILE_FLAGS -Wno-restrict # silence warnings about using ("chars" + std::to_string(num)).c_str()
+)
+
 set_property(TARGET SickoCV PROPERTY CXX_STANDARD 20)
 
 if("${INSTALL_DIR}" STREQUAL "")
